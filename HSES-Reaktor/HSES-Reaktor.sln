@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSES-Reaktor.CSharp.Plugins", "HSES-Reaktor.CSharp.Plugins.csproj", "{28A69EB1-E16D-F916-3574-1810064B2891}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSES-Reaktor.CSharp", "HSES-Reaktor.CSharp.csproj", "{211CFC1F-B777-0C9A-3001-FE7DDBED9880}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSES-Reaktor.CSharp.Editor", "HSES-Reaktor.CSharp.Editor.csproj", "{B0A38FA7-F645-5300-4847-001A3CA5BA23}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{28A69EB1-E16D-F916-3574-1810064B2891}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28A69EB1-E16D-F916-3574-1810064B2891}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28A69EB1-E16D-F916-3574-1810064B2891}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28A69EB1-E16D-F916-3574-1810064B2891}.Release|Any CPU.Build.0 = Release|Any CPU
+		{211CFC1F-B777-0C9A-3001-FE7DDBED9880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{211CFC1F-B777-0C9A-3001-FE7DDBED9880}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{211CFC1F-B777-0C9A-3001-FE7DDBED9880}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{211CFC1F-B777-0C9A-3001-FE7DDBED9880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0A38FA7-F645-5300-4847-001A3CA5BA23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0A38FA7-F645-5300-4847-001A3CA5BA23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0A38FA7-F645-5300-4847-001A3CA5BA23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0A38FA7-F645-5300-4847-001A3CA5BA23}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
