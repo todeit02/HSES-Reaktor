@@ -61,11 +61,15 @@ public class GameManager {
     public void SetUsedSubgames(List<string> chosenSubgames)
     {
         Debug.Log("Changing used subgames.");
+
+        // TO DO
     }
 
     public void StartGame()
     {
         Debug.Log("Starting a new game.");
+        // Load scene of first subgame.
+
     }
 
     // Create list of all the project's subgames' names.
