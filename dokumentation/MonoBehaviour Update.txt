@@ -5,7 +5,7 @@ Unity->+Subgame: Update()
 Subgame->+ReactionTask: IsExpired()
 ReactionTask-->-Subgame: IsExpired
 opt IsExpired
-    Subgame->+ReactionTask: Recreate()
+    Subgame->+ReactionTask: Create()
     ReactionTask->-Subgame:
 end
 

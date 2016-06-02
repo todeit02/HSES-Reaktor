@@ -1,7 +1,5 @@
 title Game.Start()
-
-Game->+Player: Reset()
-Player->-Game:
+Game->Game: InstantiatePlayers()
 
 Game->+Subgame: Start()
 
