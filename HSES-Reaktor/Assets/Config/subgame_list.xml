@@ -1,0 +1,10 @@
+<subgameList>
+	<subgame>
+		<prefab>subgameMitarbeiterFoto</prefab>
+		<menuName>Heißt er/sie so?</menuName>
+	</subgame>
+	<subgame>
+		<prefab>subgameStandortFakultaet</prefab>
+		<menuName>Fakultät an Standort?</menuName>
+	</subgame>
+</subgameList>

@@ -1,0 +1,7 @@
+<!DOCTYPE subgameList
+[
+<!ELEMENT subgameList (subgame*) >
+<!ELEMENT subgame (prefab,menuName)>
+<!ELEMENT prefab (#PCDATA)>
+<!ELEMENT menuName (#PCDATA)>
+]>
