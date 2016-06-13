@@ -27,24 +27,18 @@ public class Player : MonoBehaviour
     }
 
     private int score = 0;
-    private bool hasReacted;
+
+    public int Score
+    {
+        get
+        {
+            return score;
+        }
+    }
 
     public void HandleBuzzerButtonClick()
     {
-        React();
-    }
-
-    public bool ReleaseReactionState()
-    {
-        if (hasReacted)
-        {
-            hasReacted = false;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        GameManager.Instance.OnPlayerReaction(this);
     }
 
     public void TakeReactionResult(bool wasCorrect)
@@ -83,11 +77,6 @@ public class Player : MonoBehaviour
     {
         ChangeBuzzerAppearance(BuzzerState.idle);
         ShowNotification("");
-    }
-
-    private void React()
-    {
-        hasReacted = true;
     }
 
     private void ChangeScore(int signedDelta)

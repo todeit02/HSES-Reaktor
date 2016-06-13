@@ -51,23 +51,6 @@ public class GameManager {
             }
         }
     }
-
-    /*// Use this for initialization
-    void Start ()
-    {
-        // Always use the game created after application start.
-        // SetInstance(this);
-
-        if (FindObjectsOfType(typeof(GameManager)).Length != 1)
-        {
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            // Pass the Game object to configuration menu or subgame.
-            DontDestroyOnLoad(this.gameObject);
-        }
-    }*/
     
     public void StartGame()
     {
@@ -76,5 +59,14 @@ public class GameManager {
         {
             Debug.Log(usedPrefab);
         }
+    }
+
+    public void OnPlayerReaction(Player reactor)
+    {
+        // TO DO: Ask subgame if reaction was expected.
+
+        bool wasReactionCorrect = false; // Dummy value
+
+        reactor.TakeReactionResult(wasReactionCorrect);
     }
 }
