@@ -1,0 +1,5 @@
+- Player-Prefab erstellen
+- Instantiierung der Player-Prefabs durch den GameManager planen
+- Instantiierung der Player-Prefabs durch den GameManager implementieren
+- Abfrage der Player durch den GameManager planen
+- Abfrage der Player durch den GameManager implementieren
