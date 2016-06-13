@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class GameManager {
 
     private const byte maxPlayersCount = 4;
-    private const string subgameScenePrefix = "Subgame";
 
     private static GameManager instance = null;
 
@@ -22,6 +21,18 @@ public class GameManager {
                 instance = new GameManager();
             }
             return instance;
+        }
+    }
+
+    public List<string> Subgames
+    {
+        get
+        {
+            return subgames;
+        }
+        set
+        {
+            subgames = value;
         }
     }
 
@@ -57,39 +68,13 @@ public class GameManager {
             DontDestroyOnLoad(this.gameObject);
         }
     }*/
-
-    public void SetUsedSubgames(List<string> chosenSubgames)
-    {
-        Debug.Log("Changing used subgames.");
-
-        // TO DO
-    }
-
+    
     public void StartGame()
     {
-        Debug.Log("Starting a new game.");
-        // Load scene of first subgame.
-
-    }
-
-    // Create list of all the project's subgames' names.
-    public static List<string> GetExistingSubgames()
-    {
-        List<string> SubgameList = new List<string>();
-        foreach (UnityEditor.EditorBuildSettingsScene checkingScene in UnityEditor.EditorBuildSettings.scenes)
+        Debug.Log("Starting a new game with subgames:");
+        foreach (string usedPrefab in subgames)
         {
-            if (checkingScene.enabled)
-            {                
-                string sceneName = checkingScene.path.Substring(checkingScene.path.LastIndexOf('/') + 1);
-                sceneName = sceneName.Substring(0, sceneName.Length - 6);
-
-                if (0 == sceneName.IndexOf("Subgame"))
-                {
-                    string subgameName = sceneName.Substring(subgameScenePrefix.Length, sceneName.Length - subgameScenePrefix.Length); ;
-                    SubgameList.Add(subgameName);
-                }
-            }
+            Debug.Log(usedPrefab);
         }
-        return SubgameList;
     }
 }

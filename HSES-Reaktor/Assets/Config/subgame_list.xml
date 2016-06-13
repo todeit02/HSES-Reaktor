@@ -7,4 +7,16 @@
 		<prefab>subgameStandortFakultaet</prefab>
 		<menuName>Fakultät an Standort?</menuName>
 	</subgame>
+	<subgame>
+		<prefab>subgameStandortFakultaet2</prefab>
+		<menuName>Fakultät an Standort?2</menuName>
+	</subgame>
+	<subgame>
+		<prefab>subgameStandortFakultaet3</prefab>
+		<menuName>Fakultät an Standort?3</menuName>
+	</subgame>
+	<subgame>
+		<prefab>subgameStandortFakultaet4</prefab>
+		<menuName>Fakultät an Standort?4</menuName>
+	</subgame>
 </subgameList>
