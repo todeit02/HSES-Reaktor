@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -43,12 +44,17 @@ public class GameManager {
         {
             if ((maxPlayersCount < value) || (1 > value))
             {
-                throw new System.Exception("Invalid player count is being set.");
+                playersCount = maxPlayersCount;
+                throw new System.Exception("Tried to set invalid player count.");
             }
             else
             {
                 playersCount = value;
             }
+        }
+        get
+        {
+            return playersCount;
         }
     }
     
@@ -59,6 +65,7 @@ public class GameManager {
         {
             Debug.Log(usedPrefab);
         }
+        SceneManager.LoadScene("Subgame");
     }
 
     public void OnPlayerReaction(Player reactor)
