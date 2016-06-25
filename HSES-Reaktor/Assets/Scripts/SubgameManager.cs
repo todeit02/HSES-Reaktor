@@ -2,8 +2,8 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class SubgameManager : MonoBehaviour {
-
+public class SubgameManager : MonoBehaviour
+{
     public RectTransform playerCtrlAreaLeft;
     public RectTransform playerCtrlAreaRight;
     public RectTransform taskZone;
@@ -16,6 +16,7 @@ public class SubgameManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
         PlacePlayerControls();
+        StartSubgame(GameManager.Instance.Subgames[0]);
     }
 	
 	// Update is called once per frame
@@ -73,9 +74,19 @@ public class SubgameManager : MonoBehaviour {
         }
     }
 
-    public void StartSubgame()
+    public void StartSubgame(string subgamePrefabName)
     {
+        GameObject startingSubgamePrefab = Resources.Load(subgamePrefabName) as GameObject;
+        GameObject startingSubgameInstance = Instantiate(startingSubgamePrefab);
 
+        startingSubgameInstance.transform.SetParent(taskZone.transform, false);
+
+        // Make sure prefab instance is stretched all over the task zone.
+        RectTransform startingSgInstanceRectTrans = startingSubgameInstance.GetComponent<RectTransform>();
+        startingSgInstanceRectTrans.anchorMin = new Vector2(0, 0);
+        startingSgInstanceRectTrans.anchorMax = new Vector2(1, 1);
+        startingSgInstanceRectTrans.offsetMin = new Vector2(0, 0);
+        startingSgInstanceRectTrans.offsetMax = new Vector2(0, 0);
     }
 
     public void OnSubgameEnd()

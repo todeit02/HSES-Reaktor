@@ -73,9 +73,11 @@
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\MenuConfigManager.cs" />
     <Compile Include="Assets\Scripts\MenuMainManager.cs" />
+    <Compile Include="Assets\Scripts\MitarbeiterFotoSubgame.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\Subgame.cs" />
     <Compile Include="Assets\Scripts\SubgameManager.cs" />
+    <Compile Include="Assets\Scripts\TerminableTaskSubgame.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Config\subgame_list.xml" />
