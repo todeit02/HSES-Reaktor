@@ -24,25 +24,25 @@ public class MenuMainManager : MonoBehaviour
 
         if (buttonClicked == ButtonPlayerCnt1)
         {
-            GameManager.Instance.PlayersCount = 1;
+            GameManager.PlayersCount = 1;
         }
         else if (buttonClicked == ButtonPlayerCnt2)
         {
-            GameManager.Instance.PlayersCount = 2;
+            GameManager.PlayersCount = 2;
         }
         else if (buttonClicked == ButtonPlayerCnt3)
         {
-            GameManager.Instance.PlayersCount = 3;
+            GameManager.PlayersCount = 3;
         }
         else if (buttonClicked == ButtonPlayerCnt4)
         {
-            GameManager.Instance.PlayersCount = 4;
+            GameManager.PlayersCount = 4;
         }
     }
 
     public void HandleStartGameClick()
     {
-        GameManager.Instance.StartGame();
+        GameManager.StartGame();
     }
 
     public void HandleConfigGameClick()

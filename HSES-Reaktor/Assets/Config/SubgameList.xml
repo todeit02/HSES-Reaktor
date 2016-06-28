@@ -1,11 +1,11 @@
 <subgameList>
 	<subgame>
-		<prefab>SubgameMitarbeiterFoto</prefab>
+		<prefab>SubgameEmployeePhoto</prefab>
 		<menuName>Heißt die Person so?</menuName>
 	</subgame>
 	<subgame>
-		<prefab>SubgameStandortFakultaet</prefab>
-		<menuName>Fakultät an Standort?</menuName>
+		<prefab>SubgameColloquiumActivity</prefab>
+		<menuName>Veranstaltung im Kolloquium?</menuName>
 	</subgame>
 	<subgame>
 		<prefab>SubgameProfessorVorlesung</prefab>

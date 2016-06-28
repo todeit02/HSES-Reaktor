@@ -3,42 +3,25 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameManager {
+public static class GameManager {
+
+    public static Queue<string> subgames;
 
     private const byte maxPlayersCount = 4;
+    private static byte playersCount = 4;
+    private static Subgame runningSubgame;
+    private static List<Player> participants;
 
-    private static GameManager instance = null;
-
-    private List<string> subgames;
-    private byte playersCount = 4;
-
-    // GameManager singleton access property.
-    public static GameManager Instance
+    public static Subgame RunningSubgame
     {
-        get
-        {
-            if (null == instance)
-            {
-                instance = new GameManager();
-            }
-            return instance;
-        }
-    }
-
-    public List<string> Subgames
-    {
-        get
-        {
-            return subgames;
-        }
         set
         {
-            subgames = value;
+            runningSubgame = value;
         }
     }
 
     // PlayersCount property.
-    public byte PlayersCount
+    public static byte PlayersCount
     {
         set
         {
@@ -58,22 +41,44 @@ public class GameManager {
         }
     }
     
-    public void StartGame()
+    public static void StartGame()
     {
         Debug.Log("Starting a new game with subgames:");
-        foreach (string usedPrefab in subgames)
+        foreach (string usedPrefab in subgames.ToArray())
         {
             Debug.Log(usedPrefab);
         }
         SceneManager.LoadScene("Subgame");
     }
 
-    public void OnPlayerReaction(Player reactor)
+    public static void RegisterPlayer(Player registeringPlayer)
+    {
+        if((participants != null) && !(participants.Count < maxPlayersCount))
+        {
+            throw new System.Exception("Maximum registerable player count reached.");
+        }
+
+        if (participants == null)
+        {
+            participants = new List<Player>();
+        }
+        participants.Add(registeringPlayer);
+    }
+
+    public static void OnPlayerReaction(Player reactor)
     {
         // TO DO: Ask subgame if reaction was expected.
 
-        bool wasReactionCorrect = false; // Dummy value
+        bool wasReactionCorrect = runningSubgame.ExpectsReaction();
 
         reactor.TakeReactionResult(wasReactionCorrect);
+    }
+
+    public static void ResetPlayerUIs()
+    {
+        foreach(Player resettingPlayer in participants)
+        {
+            resettingPlayer.ResetUI();
+        }
     }
 }

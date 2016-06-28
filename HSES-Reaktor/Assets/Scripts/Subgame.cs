@@ -3,57 +3,49 @@ using System.Collections;
 
 public abstract class Subgame : MonoBehaviour
 {
+    public enum SubgameState
+    {
+        Active, Terminated, Paused
+    }
+
+    public enum InternalTrigger
+    {
+        Entry, Exit, None
+    }
+
+    protected readonly string[] taskViewNames = { "TaskView1", "TaskView2" };
     protected const int taskViewsCount = 2;
+    protected bool hasReactionOccured = false;
     private const int requiredWins = 3;
     private int remainingWins = requiredWins;
-    private float taskStartingTime;
-    private float pauseDuration = 0;
+    private float taskRuntime = 0;
     private bool isTaskTimerRunning = false;
-    private bool isPaused = false;
 
-    protected float TaskStartingTime
+    protected bool AreWinsRemaining
     {
         get
         {
-            return taskStartingTime;
+            return (remainingWins > 0);
         }
     }
 
-    protected float PauseDuration
+    protected float TaskRuntime
     {
         get
         {
-            return pauseDuration;
+            return taskRuntime;
         }
     }
 
-    public virtual void Awake()
-    {
+    public abstract void Awake();
 
-    }
+    public abstract void Start();
 
-    public virtual void Start()
-    {
-        StartNewTask();
-    }
-
-    public virtual void Update()
-    {
-
-    }
+    public abstract void Update();
 
     public virtual void FixedUpdate()
     {
-        if(isPaused)
-        {
-            pauseDuration += Time.fixedDeltaTime;
-        }
-
-        if (HasTaskExpired())
-        {
-            TerminateTask();
-            StartNewTask();
-        }
+        TriggerTaskTimer();
     }
 
     public bool HasEnded()
@@ -63,21 +55,26 @@ public abstract class Subgame : MonoBehaviour
 
     public void Pause()
     {
-        isPaused = true;
         LockTaskTimer();
     }
 
     public void Resume()
     {
-        isPaused = false;
         ReleaseTaskTimer();
+    }
+
+    public void Destroy()
+    {
+        GameObject.Destroy(gameObject);
     }
 
     public abstract bool ExpectsReaction();
 
-    protected virtual void StartNewTask()
+    public abstract SubgameState Run();
+
+    protected virtual void LoadNewTask()
     {
-        InitTaskTimers();
+        hasReactionOccured = false;
     }
 
     protected virtual void TerminateTask()
@@ -87,8 +84,7 @@ public abstract class Subgame : MonoBehaviour
     protected void InitTaskTimers()
     {
         isTaskTimerRunning = false;
-        taskStartingTime = Time.fixedTime;
-        pauseDuration = 0;
+        taskRuntime = 0;
     }
 
     protected void ReleaseTaskTimer()
@@ -99,6 +95,19 @@ public abstract class Subgame : MonoBehaviour
     protected void LockTaskTimer()
     {
         isTaskTimerRunning = false;
+    }
+
+    private void TriggerTaskTimer()
+    {
+        if(isTaskTimerRunning)
+        {
+            taskRuntime += Time.fixedDeltaTime;
+        }
+    }
+
+    protected void decreaseRemainingWins()
+    {
+        remainingWins--;
     }
 
     protected abstract bool HasTaskExpired();

@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
 
     public void HandleBuzzerButtonClick()
     {
-        GameManager.Instance.OnPlayerReaction(this);
+        GameManager.OnPlayerReaction(this);
     }
 
     public void TakeReactionResult(bool wasCorrect)

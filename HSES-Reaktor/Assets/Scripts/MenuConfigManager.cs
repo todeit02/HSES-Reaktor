@@ -41,13 +41,16 @@ public class MenuConfigManager : MonoBehaviour
     {
         BuildSubgameToggleList();
         PlaceSubgameToggles();
-        SetSelectedToggles();
+        if(GameManager.subgames != null)
+        {
+            SetSelectedToggles();
+        }
     }
 
     public void HandleGameStartClick()
     {
         SaveSelectedToggles();
-        GameManager.Instance.StartGame();
+        GameManager.StartGame();
     }
 
     public void HandleMenuMainClick()
@@ -58,7 +61,7 @@ public class MenuConfigManager : MonoBehaviour
 
     private void BuildSubgameToggleList()
     {
-        const string subgameListPath = ".\\assets\\config\\subgame_list.xml";
+        const string subgameListPath = @".\assets\config\SubgameList.xml";
         const string elemNameSubgameList = "subgameList";
         const string elemNameSubgame = "subgame";
         const string elemNamePrefab = "prefab";
@@ -207,26 +210,40 @@ public class MenuConfigManager : MonoBehaviour
 
     private void SetSelectedToggles()
     {
-        List<string> selections = GameManager.Instance.Subgames;
+        // Queue subgames
+        // List toggles
 
-        if (null != selections)
+        if (GameManager.subgames != null)
         {
-            // A selection has already been saved, so 
-            foreach (SubgameToggle configuringToggle in toggles)
+            // Unselect all toggles.
+            foreach (SubgameToggle deselectingToggle in toggles)
             {
-                if (!selections.Contains(configuringToggle.prefabName))
+                deselectingToggle.toggleObject.transform.Find("Toggle").GetComponent<Toggle>().isOn = false;
+            }
+
+            // Select toggles of previously selected subgames.
+            foreach (string tickingSubgameName in GameManager.subgames.ToArray())
+            {
+                foreach (SubgameToggle configuringToggle in toggles)
                 {
-                    configuringToggle.toggleObject.transform.Find("Toggle").GetComponent<Toggle>().isOn = false;
+                    if (configuringToggle.prefabName == tickingSubgameName)
+                    {
+                        configuringToggle.toggleObject.transform.Find("Toggle").GetComponent<Toggle>().isOn = true;
+                    }
                 }
             }
+            GameManager.subgames.Clear();
         }
     }
 
     private void SaveSelectedToggles()
     {
-        List<string> selectedSubgames = null;
-
         bool isSubgameSelected = false;
+        
+        if(GameManager.subgames == null)
+        {
+            GameManager.subgames = new Queue<string>();
+        }
 
         // Add selected subgames to the game.
         foreach (SubgameToggle checkingToggle in toggles)
@@ -235,13 +252,8 @@ public class MenuConfigManager : MonoBehaviour
 
             if (isSubgameSelected)
             {
-                if (null == selectedSubgames)
-                {
-                    selectedSubgames = new List<string>();
-                }
-                selectedSubgames.Add(checkingToggle.prefabName);
+                GameManager.subgames.Enqueue(checkingToggle.prefabName);
             }
         }
-        GameManager.Instance.Subgames = selectedSubgames;
     }
 }
