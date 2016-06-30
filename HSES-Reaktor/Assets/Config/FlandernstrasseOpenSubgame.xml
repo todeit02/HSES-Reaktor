@@ -1,0 +1,27 @@
+<openingHours>
+	<timeInterval>
+		<weekday>Monday</weekday>
+		<start>06:30</start>
+		<end>19:00</end>
+	</timeInterval>
+	<timeInterval>
+		<weekday>Tuesday</weekday>
+		<start>06:30</start>
+		<end>19:00</end>
+	</timeInterval>
+	<timeInterval>
+		<weekday>Wednesday</weekday>
+		<start>06:30</start>
+		<end>19:00</end>
+	</timeInterval>
+	<timeInterval>
+		<weekday>Thursday</weekday>
+		<start>06:30</start>
+		<end>19:00</end>
+	</timeInterval>
+	<timeInterval>
+		<weekday>Friday</weekday>
+		<start>06:30</start>
+		<end>19:00</end>
+	</timeInterval>
+</openingHours>

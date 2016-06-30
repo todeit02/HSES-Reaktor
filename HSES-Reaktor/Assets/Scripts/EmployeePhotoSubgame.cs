@@ -10,9 +10,9 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
     private enum ParsingState { awaitingStaff, readingStaff, readingEmployee, readingName, readingPhotoPath, done };
 
     // paths of contained objects in the prefab
-    private readonly string[] shownNamePaths = { "TaskView1/Name", "TaskView2/Name" };
-    private readonly string[] shownPhotoPaths = { "TaskView1/Photo", "TaskView2/Photo" };
-    private readonly string[] blendAnimStateNames = { "AppearFromLeftHalf", "AppearFromRightHalf" };
+    private readonly string[] shownNamePaths = { taskViewNames[0] + "/Name", taskViewNames[1] + "/Name" };
+    private readonly string[] shownPhotoPaths = { taskViewNames[0] + "/Photo", taskViewNames[1] + "/Photo" };
+    private readonly string[] blendAnimStateNames = { "AppearFromLeftFull", "AppearFromRightFull" };
 
     // references to displayed name and photo in both TaskViews
     private Text[] shownTexts = new Text[taskViewsCount];
@@ -27,8 +27,7 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
     {
         public readonly string name;
         public Sprite photo;
-        private Texture2D photoTex;
-        private Animation[] taskStartAnimations = new Animation[taskViewsCount];
+        private Texture2D photoTexture;
 
         public Employee(string name, string photoPath)
         {
@@ -48,20 +47,24 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
             this.name = name;
 
             byte[] photoData = File.ReadAllBytes(photoPath);
-            photoTex = new Texture2D(0, 0);
+            photoTexture = new Texture2D(0, 0);
 
             try
             {
-                photoTex.LoadImage(photoData);
+                photoTexture.LoadImage(photoData);
             }
             catch
             {
                 throw new System.Exception("Loading failed: " + photoPath);
             }
 
-            photo = Sprite.Create(photoTex, new Rect(0, 0, photoTex.width, photoTex.height), new Vector2(photoTex.width / 2, photoTex.height / 2));
+            photo = Sprite.Create(photoTexture, new Rect(0, 0, photoTexture.width, photoTexture.height), new Vector2(photoTexture.width / 2, photoTexture.height / 2));
         }
     }
+
+    /***********************************************************/
+    /********************** Unity Methods **********************/
+    /***********************************************************/
 
     public override void Awake()
     {
@@ -89,18 +92,25 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
         base.FixedUpdate();
     }
 
-    public override bool ExpectsReaction()
+    /***********************************************************/
+    /*********************** User Methods **********************/
+    /***********************************************************/
+
+    public override bool ExpectsReaction
     {
-        hasReactionOccured = true; // Indicate that a reaction occured.
-
-        bool isReactionExpected = (trueEmployee.name == shownTexts[0].text);
-
-        if (isReactionExpected)
+        get
         {
-            decreaseRemainingWins();
-        }
+            hasReactionOccured = true; // Indicate that a reaction occured.
 
-        return isReactionExpected;
+            bool isReactionExpected = (trueEmployee.name == shownTexts[0].text);
+
+            if (isReactionExpected)
+            {
+                DecreaseRemainingWins();
+            }
+
+            return isReactionExpected;
+        }
     }
 
     protected override void LoadNewTask()
@@ -114,6 +124,29 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
         for (int i = 0; i < taskViewsCount; i++)
         {
             shownPhotos[i].sprite = trueEmployee.photo;
+        }
+    }
+
+    protected override void PlayFadeInAnimations()
+    {
+        // Reset playback direction and starting time of the fading effect.
+        for (int i = 0; i < taskViewsCount; i++)
+        {
+            AnimationState blendAnimState = TaskStartAnimations[i][blendAnimStateNames[i]];
+            blendAnimState.speed = 1;
+            blendAnimState.time = 0;
+            TaskStartAnimations[i].Play();
+        }
+    }
+
+    protected override void PlayFadeOutAnimations()
+    {
+        for (int i = 0; i < TaskStartAnimations.Length; i++)
+        {
+            AnimationState blendAnimState = TaskStartAnimations[i][blendAnimStateNames[i]];
+            blendAnimState.speed = -1;
+            blendAnimState.time = blendAnimState.length;
+            TaskStartAnimations[i].Play();
         }
     }
 
@@ -257,28 +290,5 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
 
         // Create new Employee instance using the random name and path.
         return loadedEmployeeNames[randomIndex];
-    }
-
-    protected override void PlayFadeInAnimations()
-    {
-        // Reset playback direction and starting time of the fading effect.
-        for (int i = 0; i < taskViewsCount; i++)
-        {
-            AnimationState blendAnimState = TaskStartAnimations[i][blendAnimStateNames[i]];
-            blendAnimState.speed = 1;
-            blendAnimState.time = 0;
-            TaskStartAnimations[i].Play();
-        }
-    }
-
-    protected override void PlayFadeOutAnimations()
-    {
-        for (int i = 0; i < TaskStartAnimations.Length; i++)
-        {
-            AnimationState blendAnimState = TaskStartAnimations[i][blendAnimStateNames[i]];
-            blendAnimState.speed = -1;
-            blendAnimState.time = blendAnimState.length;
-            TaskStartAnimations[i].Play();
-        }
     }
 }

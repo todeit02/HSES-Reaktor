@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class MenuMainManager : MonoBehaviour
 {
+    public const string sceneName = "MenuMain";
+
     public Button ButtonPlayerCnt1;
     public Button ButtonPlayerCnt2;
     public Button ButtonPlayerCnt3;

@@ -13,7 +13,8 @@ public abstract class Subgame : MonoBehaviour
         Entry, Exit, None
     }
 
-    protected readonly string[] taskViewNames = { "TaskView1", "TaskView2" };
+    protected static readonly string[] taskViewNames = { "TaskViewBottom", "TaskViewTop" };
+
     protected const int taskViewsCount = 2;
     protected bool hasReactionOccured = false;
     private const int requiredWins = 3;
@@ -37,6 +38,10 @@ public abstract class Subgame : MonoBehaviour
         }
     }
 
+    /***********************************************************/
+    /********************** Unity Methods **********************/
+    /***********************************************************/
+
     public abstract void Awake();
 
     public abstract void Start();
@@ -48,9 +53,16 @@ public abstract class Subgame : MonoBehaviour
         TriggerTaskTimer();
     }
 
-    public bool HasEnded()
+    /***********************************************************/
+    /*********************** User Methods **********************/
+    /***********************************************************/
+
+    public bool HasEnded
     {
-        return (remainingWins > 0);
+        get
+        {
+            return (remainingWins > 0);
+        }
     }
 
     public void Pause()
@@ -63,12 +75,15 @@ public abstract class Subgame : MonoBehaviour
         ReleaseTaskTimer();
     }
 
-    public void Destroy()
+    public void DestroyObject()
     {
-        GameObject.Destroy(gameObject);
+        Object.Destroy(gameObject);
     }
 
-    public abstract bool ExpectsReaction();
+    public abstract bool ExpectsReaction
+    {
+        get;
+    }
 
     public abstract SubgameState Run();
 
@@ -97,18 +112,18 @@ public abstract class Subgame : MonoBehaviour
         isTaskTimerRunning = false;
     }
 
-    private void TriggerTaskTimer()
-    {
-        if(isTaskTimerRunning)
-        {
-            taskRuntime += Time.fixedDeltaTime;
-        }
-    }
-
-    protected void decreaseRemainingWins()
+    protected void DecreaseRemainingWins()
     {
         remainingWins--;
     }
 
     protected abstract bool HasTaskExpired();
+
+    private void TriggerTaskTimer()
+    {
+        if (isTaskTimerRunning)
+        {
+            taskRuntime += Time.fixedDeltaTime;
+        }
+    }
 }

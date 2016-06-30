@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 using System.Collections.Generic;
 
 public static class GameManager {
@@ -43,12 +42,24 @@ public static class GameManager {
     
     public static void StartGame()
     {
-        Debug.Log("Starting a new game with subgames:");
-        foreach (string usedPrefab in subgames.ToArray())
+        string loadingSceneName;
+
+        if (!((GameManager.subgames == null) || (GameManager.subgames.Count == 0)))
         {
-            Debug.Log(usedPrefab);
+            loadingSceneName = SubgameManager.sceneName;
+
+            Debug.Log("Starting a new game with subgames:");
+            foreach (string usedPrefab in subgames.ToArray())
+            {
+                Debug.Log(usedPrefab);
+            }
         }
-        SceneManager.LoadScene("Subgame");
+        else
+        {
+            loadingSceneName = MenuMainManager.sceneName;
+        }
+
+        SceneManager.LoadScene(loadingSceneName);
     }
 
     public static void RegisterPlayer(Player registeringPlayer)
@@ -69,7 +80,7 @@ public static class GameManager {
     {
         // TO DO: Ask subgame if reaction was expected.
 
-        bool wasReactionCorrect = runningSubgame.ExpectsReaction();
+        bool wasReactionCorrect = runningSubgame.ExpectsReaction;
 
         reactor.TakeReactionResult(wasReactionCorrect);
     }
@@ -80,5 +91,13 @@ public static class GameManager {
         {
             resettingPlayer.ResetUI();
         }
+    }
+
+    public static void Reset()
+    {
+        playersCount = maxPlayersCount;
+        subgames = null;
+        runningSubgame = null;
+        participants = null;
     }
 }

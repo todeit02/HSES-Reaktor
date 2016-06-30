@@ -1,36 +1,94 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class SubgameManager : MonoBehaviour
 {
-    public RectTransform playerCtrlAreaLeft;
-    public RectTransform playerCtrlAreaRight;
+    public const string sceneName = "Subgame";
+    public RectTransform playerCtrlAreaBottom;
+    public RectTransform playerCtrlAreaTop;
     public RectTransform taskZone;
     public GameObject playerControlsPrefab;
 
     private Subgame runningSubgame;
 
-    private const float ctrlsAnchorMaxX = 1.5f;
+    private const float ctrlsAnchorMaxY = 1.5f;
 
-    void Start () {
-        PlacePlayerControls();
-        runningSubgame = StartSubgame(GameManager.subgames.Dequeue());
+    private enum BuzzerPosition
+    {
+        bottomRighthand = 0, topRighthand, bottomLefthand, topLefthand
     }
-	
-	void Update () {
-        if(runningSubgame.Run() == Subgame.SubgameState.Terminated)
+
+    /***********************************************************/
+    /********************** Unity Methods **********************/
+    /***********************************************************/
+
+    void Start ()
+    {
+        if (!((GameManager.subgames == null) || (GameManager.subgames.Count == 0)))
         {
-            runningSubgame.Destroy();
-            StartSubgame(GameManager.subgames.Dequeue());
+            // Trial of prefab placement may result in return to main menu, so don't place controls until this is done.
+            PlaceNextSubgamePrefab();
+            PlacePlayerControls();
         }
-	}
+        else
+        {
+            GameManager.Reset();
+            SceneManager.LoadScene(MenuMainManager.sceneName);
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (runningSubgame != null)
+        {
+            Subgame.SubgameState currentSubgameState = runningSubgame.Run();
+
+            if (currentSubgameState == Subgame.SubgameState.Terminated)
+            {
+                runningSubgame.DestroyObject();
+                runningSubgame = null;
+                PlaceNextSubgamePrefab();
+            }
+        }
+    }
+
+    /***********************************************************/
+    /*********************** User Methods **********************/
+    /***********************************************************/
+
+    public Subgame PlaceSubgamePrefab(string subgamePrefabName)
+    {
+        GameObject placingSubgamePrefab = Resources.Load(subgamePrefabName) as GameObject;
+
+        if (placingSubgamePrefab == null) // Return upon wrong prefab name.
+        {
+            return null;
+        }
+
+        GameObject placingSubgameInstance = Instantiate(placingSubgamePrefab);
+
+        placingSubgameInstance.transform.SetParent(taskZone.transform, false);
+
+        // Make sure prefab instance is stretched all over the task zone.
+        RectTransform placingSgInstanceRectTrans = placingSubgameInstance.GetComponent<RectTransform>();
+        placingSgInstanceRectTrans.anchorMin = new Vector2(0, 0);
+        placingSgInstanceRectTrans.anchorMax = new Vector2(1, 1);
+        placingSgInstanceRectTrans.offsetMin = new Vector2(0, 0);
+        placingSgInstanceRectTrans.offsetMax = new Vector2(0, 0);
+
+        Subgame placedSubgame = placingSubgameInstance.GetComponent<Subgame>();
+
+        GameManager.RunningSubgame = placedSubgame;
+
+        return placedSubgame;
+    }
 
     private void PlacePlayerControls()
     {
         byte controlsCount = GameManager.PlayersCount;
 
-        for (byte ctrlsIndex = 0; ctrlsIndex < controlsCount; ctrlsIndex++)
+        for (BuzzerPosition placingPosition = (BuzzerPosition)0; placingPosition < (BuzzerPosition)controlsCount; placingPosition++)
         {
             GameObject placingControls = Instantiate(playerControlsPrefab);
             RectTransform placingControlsRectTransform = placingControls.GetComponent<RectTransform>();
@@ -40,30 +98,30 @@ public class SubgameManager : MonoBehaviour
             GameManager.RegisterPlayer(placingPlayer);
             
             // Place controls depending on order.
-            switch (ctrlsIndex)
+            switch (placingPosition)
             {
-                case 0:
-                    placingControls.transform.SetParent(playerCtrlAreaLeft.transform, false);
-                    placingControlsRectTransform.anchorMin = new Vector2(0, 0.5f);
-                    placingControlsRectTransform.anchorMax = new Vector2(ctrlsAnchorMaxX, 1);
+                case BuzzerPosition.bottomRighthand:
+                    placingControls.transform.SetParent(playerCtrlAreaBottom.transform, false);
+                    placingControlsRectTransform.anchorMin = new Vector2(0.5f, 0);
+                    placingControlsRectTransform.anchorMax = new Vector2(1, ctrlsAnchorMaxY);
                     break;
 
-                case 1:
-                    placingControls.transform.SetParent(playerCtrlAreaRight.transform, false);
+                case BuzzerPosition.topRighthand:
+                    placingControls.transform.SetParent(playerCtrlAreaTop.transform, false);
+                    placingControlsRectTransform.anchorMin = new Vector2(0.5f, 0);
+                    placingControlsRectTransform.anchorMax = new Vector2(1, ctrlsAnchorMaxY);
+                    break;
+
+                case BuzzerPosition.bottomLefthand:
+                    placingControls.transform.SetParent(playerCtrlAreaBottom.transform, false);
                     placingControlsRectTransform.anchorMin = new Vector2(0, 0);
-                    placingControlsRectTransform.anchorMax = new Vector2(ctrlsAnchorMaxX, 0.5f);
+                    placingControlsRectTransform.anchorMax = new Vector2(0.5f, ctrlsAnchorMaxY);
                     break;
 
-                case 2:
-                    placingControls.transform.SetParent(playerCtrlAreaRight.transform, false);
-                    placingControlsRectTransform.anchorMin = new Vector2(0, 0.5f);
-                    placingControlsRectTransform.anchorMax = new Vector2(ctrlsAnchorMaxX, 1);
-                    break;
-
-                case 3:
-                    placingControls.transform.SetParent(playerCtrlAreaLeft.transform, false);
+                case BuzzerPosition.topLefthand:
+                    placingControls.transform.SetParent(playerCtrlAreaTop.transform, false);
                     placingControlsRectTransform.anchorMin = new Vector2(0, 0);
-                    placingControlsRectTransform.anchorMax = new Vector2(ctrlsAnchorMaxX, 0.5f);
+                    placingControlsRectTransform.anchorMax = new Vector2(0.5f, ctrlsAnchorMaxY);
                     break;
             }
 
@@ -72,28 +130,21 @@ public class SubgameManager : MonoBehaviour
 
             // Create player control's button label.
             Text buttonLabel = placingControls.transform.Find("Buzzer").transform.Find("Text").GetComponent<Text>();
-            buttonLabel.text = string.Concat("Spieler ", ctrlsIndex + 1);
+            buttonLabel.text = string.Concat("Spieler ", (int)placingPosition + 1);
         }
     }
 
-    public Subgame StartSubgame(string subgamePrefabName)
+    private void PlaceNextSubgamePrefab()
     {
-        GameObject startingSubgamePrefab = Resources.Load(subgamePrefabName) as GameObject;
-        GameObject startingSubgameInstance = Instantiate(startingSubgamePrefab);
+        while ((runningSubgame == null) && (GameManager.subgames.Count > 0)) // Jump all non-existent subgames.
+        {
+            runningSubgame = PlaceSubgamePrefab(GameManager.subgames.Dequeue());
+        }
 
-        startingSubgameInstance.transform.SetParent(taskZone.transform, false);
-
-        // Make sure prefab instance is stretched all over the task zone.
-        RectTransform startingSgInstanceRectTrans = startingSubgameInstance.GetComponent<RectTransform>();
-        startingSgInstanceRectTrans.anchorMin = new Vector2(0, 0);
-        startingSgInstanceRectTrans.anchorMax = new Vector2(1, 1);
-        startingSgInstanceRectTrans.offsetMin = new Vector2(0, 0);
-        startingSgInstanceRectTrans.offsetMax = new Vector2(0, 0);
-
-        Subgame startedSubgame = startingSubgameInstance.GetComponent<Subgame>();
-
-        GameManager.RunningSubgame = startedSubgame;
-
-        return startedSubgame;
+        if (runningSubgame == null) // No more subgames availabe.
+        {
+            GameManager.Reset();
+            SceneManager.LoadScene(MenuMainManager.sceneName);
+        }
     }
 }

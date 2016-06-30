@@ -1,34 +1,18 @@
 <subgameList>
 	<subgame>
-		<prefab>SubgameEmployeePhoto</prefab>
+		<prefab>EmployeePhotoSubgame</prefab>
 		<menuName>Heißt die Person so?</menuName>
 	</subgame>
 	<subgame>
-		<prefab>SubgameColloquiumActivity</prefab>
+		<prefab>FlandernstrasseOpenSubgame</prefab>
+		<menuName>Standort Flandernstraße geöffnet?</menuName>
+	</subgame>
+	<subgame>
+		<prefab>ColloquiumActivitySubgame</prefab>
 		<menuName>Veranstaltung im Kolloquium?</menuName>
 	</subgame>
 	<subgame>
-		<prefab>SubgameProfessorVorlesung</prefab>
-		<menuName>Gibt Professor die Vorlesung?</menuName>
-	</subgame>
-	<subgame>
-		<prefab>SubgameStudiengangVorlesung</prefab>
-		<menuName>Vorlesung in Studiengang?</menuName>
-	</subgame>
-	<subgame>
-		<prefab>SubgameCodeCsharp</prefab>
+		<prefab>CodeCsharpSubgame</prefab>
 		<menuName>Kompiliert der Code? (C#)</menuName>
-	</subgame>
-	<subgame>
-		<prefab>SubgameCodeCpp</prefab>
-		<menuName>Kompiliert der Code? (C++)</menuName>
-	</subgame>
-	<subgame>
-		<prefab>SubgameFormelPhysik</prefab>
-		<menuName>Stimmt die Formel? (Physik)</menuName>
-	</subgame>
-	<subgame>
-		<prefab>SubgameFormelMathematik</prefab>
-		<menuName>Stimmt die Formel? (Mathe)</menuName>
 	</subgame>
 </subgameList>

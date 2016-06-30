@@ -28,12 +28,14 @@ public class MenuConfigManager : MonoBehaviour
 
     private enum ParsingState { awaitingList, readingList, readingSubgame, readingPrefab, readingMenuName, done };
 
+    public const string sceneName = "MenuConfig";
+
     public RectTransform toggleGrid;
     public GameObject subgameTogglePrefab;
 
     private List<SubgameToggle> toggles;
     private const short visibleToggles = 8;
-    private float toggleGridRectMinX = 0.0f;
+    private float toggleGridRectMinY = 0.0f;
 
 
     // Use this for initialization
@@ -174,19 +176,19 @@ public class MenuConfigManager : MonoBehaviour
 
         if (toggles.Count > 0)
         {
-            float toggleAnchorSpanX;
+            float toggleAnchorSpanY;
 
             if (visibleToggles < toggles.Count)
             {
                 // Not all toggles fit into ScrollView matching ToggleGrid, so expand it beyond the ScrollView.
-                toggleGridRectMinX = toggleGridRectMinX - (1.0f / visibleToggles) * (toggles.Count - visibleToggles);
-                toggleGrid.anchorMin = new Vector2(toggleGridRectMinX, 0);
-                toggleAnchorSpanX = 1.0f / toggles.Count;
+                toggleGridRectMinY = toggleGridRectMinY - (1.0f / visibleToggles) * (toggles.Count - visibleToggles);
+                toggleGrid.anchorMin = new Vector2(toggleGridRectMinY, 0);
+                toggleAnchorSpanY = 1.0f / toggles.Count;
             }
             else
             {
                 // ToggleGrid fits into ScrollView.
-                toggleAnchorSpanX = 1.0f / visibleToggles;
+                toggleAnchorSpanY = 1.0f / visibleToggles;
             }
 
             for (int i = 0; i < toggles.Count; i++)
@@ -198,10 +200,10 @@ public class MenuConfigManager : MonoBehaviour
 
                 // Adjust anchors.
                 RectTransform placingToggleRectTransform = placingToggle.GetComponent<RectTransform>();
-                float placingAnchorMinX = 1.0f - (i + 1) * toggleAnchorSpanX;
-                float placingAnchorMaxX = 1.0f - i * toggleAnchorSpanX;
-                placingToggleRectTransform.anchorMin = new Vector2(placingAnchorMinX, 0);
-                placingToggleRectTransform.anchorMax = new Vector2(placingAnchorMaxX, 1);
+                float placingAnchorMinY = 1.0f - (i + 1) * toggleAnchorSpanY;
+                float placingAnchorMaxY = 1.0f - i * toggleAnchorSpanY;
+                placingToggleRectTransform.anchorMin = new Vector2(0, placingAnchorMinY);
+                placingToggleRectTransform.anchorMax = new Vector2(1, placingAnchorMaxY);
                 placingToggleRectTransform.offsetMin = new Vector2(0, 0);
                 placingToggleRectTransform.offsetMax = new Vector2(0, 0);
             }

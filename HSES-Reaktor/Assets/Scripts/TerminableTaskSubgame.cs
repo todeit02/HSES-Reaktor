@@ -13,6 +13,10 @@ public abstract class TerminableTaskSubgame : Subgame
 
     private const float taskDuration = 4.0f;
 
+    /***********************************************************/
+    /********************** Unity Methods **********************/
+    /***********************************************************/
+
     public override void Awake()
     {
         for (int i = 0; i < taskViewsCount; i++)
@@ -30,30 +34,9 @@ public abstract class TerminableTaskSubgame : Subgame
         base.FixedUpdate();
     }
 
-    protected Animation[] TaskStartAnimations
-    {
-        get
-        {
-            return taskStartAnimations;
-        }
-    }
-
-    protected override bool HasTaskExpired()
-    {
-        // Is the gap between the current time and the start time (considering a possible pause) longer than the same task should be displayed?
-        return (TaskRuntime > taskDuration);
-    }
-
-    protected override void LoadNewTask()
-    {
-        base.LoadNewTask();
-    }
-
-    protected override void TerminateTask()
-    {
-        LockTaskTimer();
-        base.TerminateTask();
-    }
+    /***********************************************************/
+    /*********************** User Methods **********************/
+    /***********************************************************/
 
     public static SubgameState ToSubgameState(TerminableTaskSubgameState convertingState)
     {
@@ -101,6 +84,35 @@ public abstract class TerminableTaskSubgame : Subgame
 
         return ToSubgameState(currentTerminableTaskSubgameState);
     }
+
+    protected Animation[] TaskStartAnimations
+    {
+        get
+        {
+            return taskStartAnimations;
+        }
+    }
+
+    protected override bool HasTaskExpired()
+    {
+        // Is the gap between the current time and the start time (considering a possible pause) longer than the same task should be displayed?
+        return (TaskRuntime > taskDuration);
+    }
+
+    protected override void LoadNewTask()
+    {
+        base.LoadNewTask();
+    }
+
+    protected override void TerminateTask()
+    {
+        LockTaskTimer();
+        base.TerminateTask();
+    }
+
+    protected abstract void PlayFadeInAnimations();
+
+    protected abstract void PlayFadeOutAnimations();
 
     private void EntryActivity()
     {
@@ -191,17 +203,13 @@ public abstract class TerminableTaskSubgame : Subgame
         return (nextTerminableTaskSubgameState != currentTerminableTaskSubgameState);
     }
 
-    protected abstract void PlayFadeInAnimations();
-
-    protected abstract void PlayFadeOutAnimations();
-
     private bool IsAnimationPlaying
     {
         get
         {
             foreach (Animation checkingAnimation in taskStartAnimations)
             {
-                if (checkingAnimation.isPlaying)
+                if (checkingAnimation != null && checkingAnimation.isPlaying)
                 {
                     return true;
                 }
