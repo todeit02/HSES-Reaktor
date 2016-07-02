@@ -1,17 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public abstract class TerminableTaskSubgame : Subgame
 {
-    public enum TerminableTaskSubgameState
-    {
-        FadingIn, Active, FadingOut, Terminated, Paused
-    }
-
-    private TerminableTaskSubgameState currentTerminableTaskSubgameState = TerminableTaskSubgameState.FadingIn;
-    private TerminableTaskSubgameState nextTerminableTaskSubgameState = TerminableTaskSubgameState.FadingIn;
-    private InternalTrigger currentTrigger = InternalTrigger.Entry;
-    private Animation[] taskStartAnimations = new Animation[taskViewsCount];
-
     private const float taskDuration = 4.0f;
+
+    private float taskRuntime = 0;
+    private bool isTaskTimerRunning = false;
 
     /***********************************************************/
     /********************** Unity Methods **********************/
@@ -19,10 +13,7 @@ public abstract class TerminableTaskSubgame : Subgame
 
     public override void Awake()
     {
-        for (int i = 0; i < taskViewsCount; i++)
-        {
-            taskStartAnimations[i] = GameObject.Find(taskViewNames[i]).GetComponent<Animation>();
-        }
+        base.Awake();
     }
 
     public abstract override void Start();
@@ -32,64 +23,18 @@ public abstract class TerminableTaskSubgame : Subgame
     public override void FixedUpdate()
     {
         base.FixedUpdate();
+        TriggerTaskTimer();
     }
 
     /***********************************************************/
     /*********************** User Methods **********************/
     /***********************************************************/
 
-    public static SubgameState ToSubgameState(TerminableTaskSubgameState convertingState)
-    {
-        switch (convertingState)
-        {
-            case TerminableTaskSubgameState.Active:
-            case TerminableTaskSubgameState.FadingIn:
-            case TerminableTaskSubgameState.FadingOut:
-                return SubgameState.Active;
-
-            case TerminableTaskSubgameState.Paused:
-                return SubgameState.Paused;
-
-            case TerminableTaskSubgameState.Terminated:
-                return SubgameState.Terminated;
-        }
-        throw new System.Exception("Illegal conversion.");
-    }
-
-    public override SubgameState Run()
-    {
-        if (currentTrigger == InternalTrigger.Entry)
-        {
-            currentTrigger = InternalTrigger.None; // Reset trigger.
-            EntryActivity();
-        }
-
-        // "Do" activities (None available.)
-
-        bool hasTransitionOccured = TryTransition();
-
-        if (hasTransitionOccured)
-        {
-            currentTrigger = InternalTrigger.Exit;
-        }
-
-        if (currentTrigger == InternalTrigger.Exit)
-        {
-            currentTrigger = InternalTrigger.Entry; // If a state is left, another one is entered.
-            ExitActivity();
-        }
-
-        // Switch to next state.
-        currentTerminableTaskSubgameState = nextTerminableTaskSubgameState;
-
-        return ToSubgameState(currentTerminableTaskSubgameState);
-    }
-
-    protected Animation[] TaskStartAnimations
+    private float TaskRuntime
     {
         get
         {
-            return taskStartAnimations;
+            return taskRuntime;
         }
     }
 
@@ -99,122 +44,52 @@ public abstract class TerminableTaskSubgame : Subgame
         return (TaskRuntime > taskDuration);
     }
 
-    protected override void LoadNewTask()
+    protected abstract override void OnLoadNewTask();
+
+    protected abstract override void PlayFadeInAnimations();
+
+    protected abstract override void PlayFadeOutAnimations();
+
+    protected override void OnActiveEntry()
     {
-        base.LoadNewTask();
+        ReleaseTaskTimer();
     }
 
-    protected override void TerminateTask()
+    protected override void OnPauseEntry()
+    {        
+    }
+
+    protected override void OnActiveExit()
     {
         LockTaskTimer();
-        base.TerminateTask();
     }
 
-    protected abstract void PlayFadeInAnimations();
-
-    protected abstract void PlayFadeOutAnimations();
-
-    private void EntryActivity()
+    protected override void OnFadingInExit()
     {
-        switch (currentTerminableTaskSubgameState)
-        {
-            case TerminableTaskSubgameState.FadingIn:
-                LoadNewTask();
-                PlayFadeInAnimations();
-                break;
-
-            case TerminableTaskSubgameState.Active:
-                InitTaskTimers();
-                ReleaseTaskTimer();
-                break;
-
-            case TerminableTaskSubgameState.FadingOut:
-                PlayFadeOutAnimations();
-                break;
-
-            case TerminableTaskSubgameState.Paused:
-                LockTaskTimer();
-                break;
-        }
+        InitTaskTimers();
     }
 
-    private void ExitActivity()
+    private void InitTaskTimers()
     {
-        switch (currentTerminableTaskSubgameState)
-        {
-            case TerminableTaskSubgameState.Active:
-                LockTaskTimer();
-                break;
-
-            case TerminableTaskSubgameState.FadingOut:
-                GameManager.ResetPlayerUIs();
-                break;
-        }
+        isTaskTimerRunning = false;
+        taskRuntime = 0;
     }
 
-    private bool TryTransition()
+    private void ReleaseTaskTimer()
     {
-        switch (currentTerminableTaskSubgameState)
-        {
-            case TerminableTaskSubgameState.FadingIn:
-                if (!IsAnimationPlaying)
-                {
-                    nextTerminableTaskSubgameState = TerminableTaskSubgameState.Active;
-                    Debug.Log("FadingIn -> Active at " + Time.fixedTime);
-                }
-                break;
-
-            case TerminableTaskSubgameState.Active:
-                if (false /*Dummy value - Pause button pressed*/)
-                {
-                    nextTerminableTaskSubgameState = TerminableTaskSubgameState.Paused;
-                }
-                else if (HasTaskExpired() || hasReactionOccured)
-                {
-                    nextTerminableTaskSubgameState = TerminableTaskSubgameState.FadingOut;
-                    Debug.Log("Active -> FadingOut at " + Time.fixedTime);
-                }
-                break;
-
-            case TerminableTaskSubgameState.FadingOut:
-                if (!IsAnimationPlaying)
-                {
-                    if (AreWinsRemaining)
-                    {
-                        nextTerminableTaskSubgameState = TerminableTaskSubgameState.FadingIn;
-                        Debug.Log("FadingOut -> FadingIn at " + Time.fixedTime);
-                    }
-                    else
-                    {
-                        nextTerminableTaskSubgameState = TerminableTaskSubgameState.Terminated;
-                        Debug.Log("FadingOut -> Terminated at " + Time.fixedTime);
-                    }
-                }
-                break;
-
-            case TerminableTaskSubgameState.Paused:
-                if (false /*Dummy value - Resume button pressed*/)
-                {
-                    nextTerminableTaskSubgameState = TerminableTaskSubgameState.Active;
-                }
-                break;
-        }
-
-        return (nextTerminableTaskSubgameState != currentTerminableTaskSubgameState);
+        isTaskTimerRunning = true;
     }
 
-    private bool IsAnimationPlaying
+    private void LockTaskTimer()
     {
-        get
+        isTaskTimerRunning = false;
+    }
+
+    private void TriggerTaskTimer()
+    {
+        if (isTaskTimerRunning)
         {
-            foreach (Animation checkingAnimation in taskStartAnimations)
-            {
-                if (checkingAnimation != null && checkingAnimation.isPlaying)
-                {
-                    return true;
-                }
-            }
-            return false;
+            taskRuntime += Time.fixedDeltaTime;
         }
     }
 }

@@ -105,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Config\EmployeePhotoSubgame.xml" />
+    <None Include="Assets\Config\FlandernstrasseOpenSubgame.xml" />
     <None Include="Assets\Config\SubgameList.xml" />
     <None Include="Assets\Fonts\digital-7\readme.txt" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />

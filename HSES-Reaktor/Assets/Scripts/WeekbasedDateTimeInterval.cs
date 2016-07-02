@@ -2,6 +2,8 @@
 
 public class WeekbasedDateTimeInterval
 {
+    public const int minutesInWeek = 60 * 24 * 7;
+    
     // January 1st of year 1 was a Monday.
     private const Int32 baseYear = 1;
     private const Int32 baseMonth = 1;
@@ -18,7 +20,7 @@ public class WeekbasedDateTimeInterval
         start = new DateTime(baseYear, baseMonth, settingDay, startHours, startMinutes, baseSeconds);
 
         settingDay = ToIntBaseMonday(endDay) + 1;
-        start = new DateTime(baseYear, baseMonth, settingDay, endHours, endMinutes, baseSeconds);
+        end = new DateTime(baseYear, baseMonth, settingDay, endHours, endMinutes, baseSeconds);
     }
 
     public bool Contains(DateTime checkingDateTime)

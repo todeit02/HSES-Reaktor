@@ -96,13 +96,9 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
     /*********************** User Methods **********************/
     /***********************************************************/
 
-    public override bool ExpectsReaction
+    protected override bool OnExpectsReaction()
     {
-        get
-        {
-            hasReactionOccured = true; // Indicate that a reaction occured.
-
-            bool isReactionExpected = (trueEmployee.name == shownTexts[0].text);
+        bool isReactionExpected = (trueEmployee.name == shownTexts[0].text);
 
             if (isReactionExpected)
             {
@@ -110,13 +106,10 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
             }
 
             return isReactionExpected;
-        }
     }
 
-    protected override void LoadNewTask()
+    protected override void OnLoadNewTask()
     {
-        base.LoadNewTask();
-
         trueEmployee = LoadRandomEmployee();
         shownTexts[0].text = LoadRandomName();
         shownTexts[1].text = shownTexts[0].text;

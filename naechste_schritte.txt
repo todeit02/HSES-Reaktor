@@ -1,4 +1,5 @@
-- Subgame-Planung checken
-- Subgame implementieren
-- MitarbeiterFotoSubgame planen
-- MitarbeiterFotoSubgame implementieren
+- SubgameUniversityOpen-Klasse planen
+
+- SubgameUniversityOpen implementieren
+
+- Abstraktion für Klasse IndefiniteTaskSubgame
