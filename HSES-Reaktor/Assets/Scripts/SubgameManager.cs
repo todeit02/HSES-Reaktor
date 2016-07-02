@@ -129,8 +129,8 @@ public class SubgameManager : MonoBehaviour
             placingControlsRectTransform.offsetMax = new Vector2(0, 0);
 
             // Create player control's button label.
-            Text buttonLabel = placingControls.transform.Find("Buzzer").transform.Find("Text").GetComponent<Text>();
-            buttonLabel.text = string.Concat("Spieler ", (int)placingPosition + 1);
+            string placingPlayerName = string.Concat("Spieler ", (int)placingPosition + 1);
+            placingPlayer.InitUI(placingPlayerName);
         }
     }
 

@@ -4,7 +4,11 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public Button buzzerButton;
+    public Text playerNameText;
     public Text notificationText;
+    public Text scoreText;
+
+    public const int maxNameLength = 20;
 
     private const int standardPoints = 1;
     private readonly string[] successNotifications =
@@ -27,6 +31,14 @@ public class Player : MonoBehaviour
     }
 
     private int score = 0;
+
+    public string Name
+    {
+        get
+        {
+            return playerNameText.text;
+        }
+    }
 
     public int Score
     {
@@ -62,6 +74,7 @@ public class Player : MonoBehaviour
         }
 
         ChangeScore(signedScoreDelta);
+        UpdateScoreView();
         ChangeBuzzerAppearance(resultingState);
 
         int notificationIndex = random.Next(0, properNotifications.Length);
@@ -77,6 +90,28 @@ public class Player : MonoBehaviour
     {
         ChangeBuzzerAppearance(BuzzerState.idle);
         ShowNotification("");
+    }
+
+    public void InitUI(string initPlayerName)
+    {
+        if(score != 0)
+        {
+            throw new System.Exception("Tried to init UI of non-new player.");
+        }
+
+        // Truncate the name if too long.
+        if (initPlayerName.Length > maxNameLength)
+        {
+            initPlayerName = initPlayerName.Substring(0, maxNameLength);
+        }
+
+        playerNameText.text = initPlayerName;
+        scoreText.text = "0";
+    }
+
+    private void UpdateScoreView()
+    {
+        scoreText.text = score.ToString();
     }
 
     private void ChangeScore(int signedDelta)
