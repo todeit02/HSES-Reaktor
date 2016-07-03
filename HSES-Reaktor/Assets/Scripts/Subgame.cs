@@ -53,6 +53,11 @@ public abstract class Subgame : MonoBehaviour
     {
     }
 
+    public void OnDestroy()
+    {
+        GameManager.Reset(GameManager.ResetOption.runningSubgame);
+    }
+
     /***********************************************************/
     /*********************** User Methods **********************/
     /***********************************************************/
@@ -130,7 +135,7 @@ public abstract class Subgame : MonoBehaviour
                 break;
 
             case SubgameState.FadingOut:
-                GameManager.ResetPlayerUIs();
+                GameManager.Reset(GameManager.ResetOption.playerUIs);
                 break;
         }
     }

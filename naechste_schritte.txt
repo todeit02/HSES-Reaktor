@@ -1,5 +1,5 @@
-- SubgameUniversityOpen-Klasse planen
+- Spielabschlussszene erstellen
 
-- SubgameUniversityOpen implementieren
+- Manager-Script erstellen
 
-- Abstraktion für Klasse IndefiniteTaskSubgame
+- Szenen neu verknüpfen

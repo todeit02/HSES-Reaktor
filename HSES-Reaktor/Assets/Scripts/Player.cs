@@ -48,6 +48,16 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void Awake()
+    {
+        GameManager.RegisterPlayer(this);
+    }
+
+    public void OnDestroy()
+    {
+        GameManager.UnregisterPlayer(this);
+    }
+
     public void HandleBuzzerButtonClick()
     {
         GameManager.OnPlayerReaction(this);
@@ -84,6 +94,11 @@ public class Player : MonoBehaviour
     public void ShowNotification(string notificationText)
     {
         this.notificationText.text = notificationText;
+    }
+
+    public void ResetScore()
+    {
+        score = 0;
     }
 
     public void ResetUI()

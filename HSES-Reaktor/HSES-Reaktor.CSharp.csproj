@@ -71,17 +71,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\WeekbasedDateTimeInterval.cs" />
     <Compile Include="Assets\Scripts\EmployeePhotoSubgame.cs" />
     <Compile Include="Assets\Scripts\FlandernstrasseOpenSubgame.cs" />
+    <Compile Include="Assets\Scripts\GameCompletionManager.cs" />
     <Compile Include="Assets\Scripts\GameConfigReader.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\MenuConfigManager.cs" />
     <Compile Include="Assets\Scripts\MenuMainManager.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\PlayerStats.cs" />
     <Compile Include="Assets\Scripts\Subgame.cs" />
     <Compile Include="Assets\Scripts\SubgameManager.cs" />
     <Compile Include="Assets\Scripts\TerminableTaskSubgame.cs" />
+    <Compile Include="Assets\Scripts\WeekbasedDateTimeInterval.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Config\EmployeePhotoSubgame.xml" />

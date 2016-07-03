@@ -10,6 +10,7 @@ public class SubgameManager : MonoBehaviour
     public RectTransform taskZone;
     public GameObject playerControlsPrefab;
 
+    private bool wasValidSubgameInstantiated = false;
     private Subgame runningSubgame;
 
     private const float ctrlsAnchorMaxY = 1.5f;
@@ -23,22 +24,16 @@ public class SubgameManager : MonoBehaviour
     /********************** Unity Methods **********************/
     /***********************************************************/
 
-    void Start ()
+    public void Start ()
     {
-        if (!((GameManager.subgames == null) || (GameManager.subgames.Count == 0)))
-        {
-            // Trial of prefab placement may result in return to main menu, so don't place controls until this is done.
-            PlaceNextSubgamePrefab();
-            PlacePlayerControls();
-        }
-        else
-        {
-            GameManager.Reset();
-            SceneManager.LoadScene(MenuMainManager.sceneName);
-        }
+        wasValidSubgameInstantiated = false;
+        
+        // Trial of prefab placement may result in return to main menu, so don't place controls until this is done.
+        PlaceNextSubgamePrefab();
+        PlacePlayerControls();
     }
 
-    void FixedUpdate()
+    public void FixedUpdate()
     {
         if (runningSubgame != null)
         {
@@ -47,10 +42,14 @@ public class SubgameManager : MonoBehaviour
             if (currentSubgameState == Subgame.SubgameState.Terminated)
             {
                 runningSubgame.DestroyObject();
-                runningSubgame = null;
                 PlaceNextSubgamePrefab();
             }
         }
+    }
+
+    public void OnDestroy()
+    {
+        GameManager.Reset(GameManager.ResetOption.subgameIndex);
     }
 
     /***********************************************************/
@@ -65,6 +64,8 @@ public class SubgameManager : MonoBehaviour
         {
             return null;
         }
+
+        wasValidSubgameInstantiated = true;
 
         GameObject placingSubgameInstance = Instantiate(placingSubgamePrefab);
 
@@ -86,17 +87,13 @@ public class SubgameManager : MonoBehaviour
 
     private void PlacePlayerControls()
     {
-        byte controlsCount = GameManager.PlayersCount;
+        int controlsCount = GameManager.PlayersCount;
 
         for (BuzzerPosition placingPosition = (BuzzerPosition)0; placingPosition < (BuzzerPosition)controlsCount; placingPosition++)
         {
             GameObject placingControls = Instantiate(playerControlsPrefab);
             RectTransform placingControlsRectTransform = placingControls.GetComponent<RectTransform>();
 
-            // Let the GameManager know about the new participating Player.
-            Player placingPlayer = placingControls.GetComponent<Player>();
-            GameManager.RegisterPlayer(placingPlayer);
-            
             // Place controls depending on order.
             switch (placingPosition)
             {
@@ -130,21 +127,39 @@ public class SubgameManager : MonoBehaviour
 
             // Create player control's button label.
             string placingPlayerName = string.Concat("Spieler ", (int)placingPosition + 1);
+
+            Player placingPlayer = placingControls.GetComponent<Player>();
             placingPlayer.InitUI(placingPlayerName);
         }
     }
 
     private void PlaceNextSubgamePrefab()
     {
-        while ((runningSubgame == null) && (GameManager.subgames.Count > 0)) // Jump all non-existent subgames.
-        {
-            runningSubgame = PlaceSubgamePrefab(GameManager.subgames.Dequeue());
-        }
+        string placingSubgameName;
 
-        if (runningSubgame == null) // No more subgames availabe.
+        do
         {
-            GameManager.Reset();
-            SceneManager.LoadScene(MenuMainManager.sceneName);
+            placingSubgameName = GameManager.NextSubgameName;
+            runningSubgame = PlaceSubgamePrefab(placingSubgameName);
+        }
+        while ((placingSubgameName != null) && (runningSubgame == null)); // Subgame not loaded but more to follow.
+
+        // Subgame is now running or no more subgames are available.
+
+        if ((runningSubgame == null)) 
+        {
+            // No more subgames available.
+            if (wasValidSubgameInstantiated)
+            {
+                GameManager.ComputeRanking(); // Compute ranking before players are gone.
+                SceneManager.LoadScene(GameCompletionManager.sceneName);
+            }
+            else
+            {
+                // No subgame could be started, so no ranking can be done.            
+                GameManager.Reset(GameManager.ResetOption.playerCount | GameManager.ResetOption.subgameList);
+                SceneManager.LoadScene(MenuMainManager.sceneName);
+            }
         }
     }
 }

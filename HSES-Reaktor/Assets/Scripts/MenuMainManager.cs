@@ -13,17 +13,10 @@ public class MenuMainManager : MonoBehaviour
 
     void Start()
     {
-
-        ButtonPlayerCnt1 = ButtonPlayerCnt1.GetComponent<Button>();
-        ButtonPlayerCnt2 = ButtonPlayerCnt2.GetComponent<Button>();
-        ButtonPlayerCnt3 = ButtonPlayerCnt3.GetComponent<Button>();
-        ButtonPlayerCnt4 = ButtonPlayerCnt4.GetComponent<Button>();
     }
 
     public void HandlePlayersCountClick(Button buttonClicked)
     {
-        Debug.Log("Players count button clicked.");
-
         if (buttonClicked == ButtonPlayerCnt1)
         {
             GameManager.PlayersCount = 1;
@@ -40,6 +33,8 @@ public class MenuMainManager : MonoBehaviour
         {
             GameManager.PlayersCount = 4;
         }
+
+        Debug.Log("New players count: " + GameManager.PlayersCount);
     }
 
     public void HandleStartGameClick()

@@ -224,7 +224,7 @@ public class MenuConfigManager : MonoBehaviour
             }
 
             // Select toggles of previously selected subgames.
-            foreach (string tickingSubgameName in GameManager.subgames.ToArray())
+            foreach (string tickingSubgameName in GameManager.subgames)
             {
                 foreach (SubgameToggle configuringToggle in toggles)
                 {
@@ -244,7 +244,7 @@ public class MenuConfigManager : MonoBehaviour
         
         if(GameManager.subgames == null)
         {
-            GameManager.subgames = new Queue<string>();
+            GameManager.subgames = new List<string>();
         }
 
         // Add selected subgames to the game.
@@ -254,7 +254,7 @@ public class MenuConfigManager : MonoBehaviour
 
             if (isSubgameSelected)
             {
-                GameManager.subgames.Enqueue(checkingToggle.prefabName);
+                GameManager.subgames.Add(checkingToggle.prefabName);
             }
         }
     }
