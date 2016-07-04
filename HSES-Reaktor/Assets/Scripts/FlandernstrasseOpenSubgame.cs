@@ -142,7 +142,7 @@ public class FlandernstrasseOpenSubgame : Subgame
 
     private void LoadXML()
     {
-        const string subgameResPath         = @".\assets\config\FlandernstrasseOpenSubgame.xml";
+        const string subgameResPath         = @".\Assets\Resources\FlandernstrasseOpenSubgame.xml";
 
         const string elemNameOpeningHours   = "openingHours";
         const string elemNameTimeInterval   = "timeInterval";
@@ -318,7 +318,7 @@ public class FlandernstrasseOpenSubgame : Subgame
     
     protected override bool HasTaskExpired()
     {
-        return false; // dummy value
+        return false;
     }
 
     protected override void PlayFadeInAnimations()

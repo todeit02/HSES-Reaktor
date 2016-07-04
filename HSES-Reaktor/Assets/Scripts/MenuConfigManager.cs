@@ -63,7 +63,7 @@ public class MenuConfigManager : MonoBehaviour
 
     private void BuildSubgameToggleList()
     {
-        const string subgameListPath = @".\assets\config\SubgameList.xml";
+        const string subgameListPath = @".\Assets\Resources\SubgameList.xml";
         const string elemNameSubgameList = "subgameList";
         const string elemNameSubgame = "subgame";
         const string elemNamePrefab = "prefab";

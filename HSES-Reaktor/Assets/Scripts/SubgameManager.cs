@@ -18,6 +18,8 @@ public class SubgameManager : MonoBehaviour
     private const float ctrlsAnchorMaxY = 1.5f;
     private const float pauseDialogueAlpha = 1.0f;
 
+    private const string subgamesResFolder = "SubgamePrefabs";
+
     private enum BuzzerPosition
     {
         bottomRighthand = 0, topRighthand, bottomLefthand, topLefthand
@@ -81,7 +83,8 @@ public class SubgameManager : MonoBehaviour
 
     public Subgame PlaceSubgamePrefab(string subgamePrefabName)
     {
-        GameObject placingSubgamePrefab = Resources.Load(subgamePrefabName) as GameObject;
+        string prefabResPath = string.Concat(subgamesResFolder, '/', subgamePrefabName);
+        GameObject placingSubgamePrefab = Resources.Load(prefabResPath) as GameObject;
 
         if (placingSubgamePrefab == null) // Return upon wrong prefab name.
         {

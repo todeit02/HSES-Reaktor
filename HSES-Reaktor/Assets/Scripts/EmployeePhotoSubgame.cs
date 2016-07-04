@@ -145,7 +145,7 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
 
     private void LoadXML()
     {
-        const string subgameResPath = @".\assets\config\EmployeePhotoSubgame.xml";
+        const string subgameResPath = @".\Assets\Resources\EmployeePhotoSubgame.xml";
         const string elemNameStaff = "staff";
         const string elemNameEmployee = "employee";
         const string elemNameName = "name";
