@@ -106,11 +106,6 @@ public abstract class Subgame : MonoBehaviour
     {
     }
 
-    public void OnDestroy()
-    {
-        GameManager.Reset(GameManager.ResetOption.runningSubgame);
-    }
-
     /***********************************************************/
     /*********************** User Methods **********************/
     /***********************************************************/
@@ -268,6 +263,7 @@ public abstract class Subgame : MonoBehaviour
     public void DestroyObject()
     {
         Object.Destroy(gameObject);
+        GameManager.Reset(GameManager.ResetOption.runningSubgame);
     }
 
     private void LoadNewTask()

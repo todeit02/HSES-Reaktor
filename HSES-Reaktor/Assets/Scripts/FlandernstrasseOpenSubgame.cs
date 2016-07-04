@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 public class FlandernstrasseOpenSubgame : Subgame
 {
+    private enum ParsingState { awaitingOpeningHours, readingOpeningHours, readingTimeInterval, readingWeekday, readingStartTime, readingEndTime, done };
+
     // paths of contained objects in the prefab
     private readonly string[] shownTimeViewPaths = { taskViewNames[0] + "/Clock", taskViewNames[1] + "/Clock" };
     private readonly string[] shownWeekdayViewPaths = { taskViewNames[0] + "/Calendar/Text", taskViewNames[1] + "/Calendar/Text" };
@@ -65,6 +67,7 @@ public class FlandernstrasseOpenSubgame : Subgame
         {
             if (checkingInterval.Contains(currentTime))
             {
+                DecreaseRemainingWins();
                 return true;
             }
         }
@@ -139,41 +142,178 @@ public class FlandernstrasseOpenSubgame : Subgame
 
     private void LoadXML()
     {
-        WeekbasedDateTimeInterval addingInterval = new WeekbasedDateTimeInterval(DayOfWeek.Tuesday, 6, 30, DayOfWeek.Tuesday, 19, 0); // dummy value
+        const string subgameResPath         = @".\assets\config\FlandernstrasseOpenSubgame.xml";
 
-        openingHours = new LinkedList<WeekbasedDateTimeInterval>();
-        openingHours.AddLast(addingInterval);
+        const string elemNameOpeningHours   = "openingHours";
+        const string elemNameTimeInterval   = "timeInterval";
+        const string elemNameWeekday        = "weekday";
+        const string elemNameStartTime      = "start";
+        const string elemNameEndTime        = "end";
 
-        /*
-         * <openingHours>
-        <timeInterval>
-            <weekday>Monday</weekday>
-            <start>06:30</start>
-            <end>19:00</end>
-        </timeInterval>
-        <timeInterval>
-            <weekday>Tuesday</weekday>
-            <start>06:30</start>
-            <end>19:00</end>
-        </timeInterval>
-        <timeInterval>
-            <weekday>Wednesday</weekday>
-            <start>06:30</start>
-            <end>19:00</end>
-        </timeInterval>
-        <timeInterval>
-            <weekday>Thursday</weekday>
-            <start>06:30</start>
-            <end>19:00</end>
-        </timeInterval>
-        <timeInterval>
-            <weekday>Friday</weekday>
-            <start>06:30</start>
-            <end>19:00</end>
-        </timeInterval>
-    </openingHours>
-    */
+        const char timeDelimiter = ':';
 
+        char[] ignoreChars = { '\t', '\r', '\n' };
+
+        DayOfWeek loadedWeekday = DayOfWeek.Monday;
+        int loadedStartHours = 0;
+        int loadedStartMinutes = 0;
+        int loadedEndHours = 0;
+        int loadedEndMinutes = 0;
+
+        XmlReader subgameResourcesReader = XmlReader.Create(subgameResPath);
+        ParsingState state = ParsingState.awaitingOpeningHours;
+        bool readSuccess = false;
+        
+        while (ParsingState.done != state)
+        {
+
+            // TO DO: Implement DTD-check
+
+            do
+            {
+                readSuccess = subgameResourcesReader.Read();
+            }
+            while (-1 != subgameResourcesReader.Name.IndexOfAny(ignoreChars));
+
+            if (!readSuccess)
+            {
+                state = ParsingState.done;
+            }
+
+            switch (state)
+            {
+                case ParsingState.awaitingOpeningHours:
+                    // <openingHours>
+                    if (XmlNodeType.Element == subgameResourcesReader.NodeType && elemNameOpeningHours == subgameResourcesReader.Name)
+                    {
+                        openingHours = new LinkedList<WeekbasedDateTimeInterval>();
+
+                        state = ParsingState.readingOpeningHours;
+                    }
+                    break;
+
+                case ParsingState.readingOpeningHours:
+                    // <timeInterval>
+                    if (XmlNodeType.Element == subgameResourcesReader.NodeType && elemNameTimeInterval == subgameResourcesReader.Name)
+                    {
+                        state = ParsingState.readingTimeInterval;
+                    }
+                    // </openingHours>
+                    else if (XmlNodeType.EndElement == subgameResourcesReader.NodeType && elemNameOpeningHours == subgameResourcesReader.Name)
+                    {
+                        state = ParsingState.done;
+                    }
+                    break;
+
+                case ParsingState.readingTimeInterval:
+                    // </timeInterval>
+                    if (XmlNodeType.EndElement == subgameResourcesReader.NodeType && elemNameTimeInterval == subgameResourcesReader.Name)
+                    {
+                        state = ParsingState.readingOpeningHours;
+
+                        WeekbasedDateTimeInterval addingInterval = new WeekbasedDateTimeInterval(loadedWeekday, loadedStartHours, loadedStartMinutes, loadedWeekday, loadedEndHours, loadedEndMinutes);
+                        openingHours.AddLast(addingInterval);
+
+                    }
+                    else if (XmlNodeType.Element == subgameResourcesReader.NodeType)
+                    {
+                        switch(subgameResourcesReader.Name)
+                        {
+                            // <weekday>
+                            case elemNameWeekday:
+                                state = ParsingState.readingWeekday;
+                                break;
+
+                            // <start>
+                            case elemNameStartTime:
+                                state = ParsingState.readingStartTime;
+                                break;
+
+                            // <end>
+                            case elemNameEndTime:
+                                state = ParsingState.readingEndTime;
+                                break;
+                        }
+                    }
+                    break;
+
+                case ParsingState.readingWeekday:
+                    // </weekday>
+                    if (XmlNodeType.EndElement == subgameResourcesReader.NodeType && elemNameWeekday == subgameResourcesReader.Name)
+                    {
+                        state = ParsingState.readingTimeInterval;
+                    }
+                    // text inside <weekday></weekday>
+                    else if (XmlNodeType.Text == subgameResourcesReader.NodeType)
+                    {
+                        switch (subgameResourcesReader.Value)
+                        {
+                            case "Monday":
+                                loadedWeekday = DayOfWeek.Monday;
+                                break;
+
+                            case "Tuesday":
+                                loadedWeekday = DayOfWeek.Tuesday;
+                                break;
+
+                            case "Wednesday":
+                                loadedWeekday = DayOfWeek.Wednesday;
+                                break;
+
+                            case "Thursday":
+                                loadedWeekday = DayOfWeek.Thursday;
+                                break;
+
+                            case "Friday":
+                                loadedWeekday = DayOfWeek.Friday;
+                                break;
+
+                            case "Saturday":
+                                loadedWeekday = DayOfWeek.Saturday;
+                                break;
+
+                            case "Sunday":
+                                loadedWeekday = DayOfWeek.Sunday;
+                                break;
+                        }
+                    }
+                    break;
+
+                case ParsingState.readingStartTime:
+                    // </start>
+                    if (XmlNodeType.EndElement == subgameResourcesReader.NodeType && elemNameStartTime == subgameResourcesReader.Name)
+                    {
+                        state = ParsingState.readingTimeInterval;
+                    }
+                    // text inside <start></start>
+                    else if (XmlNodeType.Text == subgameResourcesReader.NodeType)
+                    {
+                        string wholeTime = subgameResourcesReader.Value;
+                        string[] timeParts = wholeTime.Split(timeDelimiter);
+
+                        loadedStartHours = int.Parse(timeParts[0]);
+                        loadedStartMinutes = int.Parse(timeParts[1]);
+                    }
+                    break;
+
+                case ParsingState.readingEndTime:
+                    // </end>
+                    if (XmlNodeType.EndElement == subgameResourcesReader.NodeType && elemNameEndTime == subgameResourcesReader.Name)
+                    {
+                        state = ParsingState.readingTimeInterval;
+                    }
+                    // text inside <end></end>
+                    else if (XmlNodeType.Text == subgameResourcesReader.NodeType)
+                    {
+                        string wholeTime = subgameResourcesReader.Value;
+                        string[] timeParts = wholeTime.Split(timeDelimiter);
+
+                        loadedEndHours = int.Parse(timeParts[0]);
+                        loadedEndMinutes = int.Parse(timeParts[1]);
+                    }
+                    break;
+            }
+        }
     }
     
     protected override bool HasTaskExpired()

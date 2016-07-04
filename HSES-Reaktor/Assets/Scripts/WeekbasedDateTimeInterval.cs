@@ -25,10 +25,12 @@ public class WeekbasedDateTimeInterval
 
     public bool Contains(DateTime checkingDateTime)
     {
-        bool isBeforeStart = checkingDateTime.CompareTo(start) < 0;
-        bool isAfterEnd = checkingDateTime.CompareTo(end) > 0;
+        bool isTimeAfterStart = checkingDateTime.TimeOfDay >= start.TimeOfDay;
+        bool isTimeBeforeEnd = checkingDateTime.TimeOfDay < end.TimeOfDay;
+        bool isDayAfterStart = ToIntBaseMonday(checkingDateTime.DayOfWeek) >= ToIntBaseMonday(start.DayOfWeek);
+        bool isDayBeforeEnd = ToIntBaseMonday(checkingDateTime.DayOfWeek) <= ToIntBaseMonday(end.DayOfWeek);
 
-        return (!isBeforeStart && !isAfterEnd);
+        return (isTimeAfterStart && isTimeBeforeEnd && isDayAfterStart && isDayBeforeEnd);
     }
 
     private static Int32 ToIntBaseMonday(DayOfWeek convertingDay)
