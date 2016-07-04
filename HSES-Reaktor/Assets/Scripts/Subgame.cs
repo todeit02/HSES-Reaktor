@@ -19,17 +19,70 @@ public abstract class Subgame : MonoBehaviour
     private Animation[] taskStartAnimations = new Animation[taskViewsCount];
 
     protected static readonly string[] taskViewNames = { "TaskViewBottom", "TaskViewTop" };
-
     protected const int taskViewsCount = 2;
     protected bool  hasReactionOccured = false;
+
     private const int requiredWins = 3;
     private int remainingWins = requiredWins;
-
+    private bool shallPause = false;
+    
+    public bool ExpectsReaction
+    {
+        get
+        {
+            hasReactionOccured = true; // If a reaction is expected will only be checked upon player reaction.
+            return OnExpectsReaction();
+        }
+    }
+    public SubgameState State
+    {
+        get
+        {
+            return currentSubgameState;
+        }
+    }
+    public bool ChangesState
+    {
+        get
+        {
+            return (currentTrigger != InternalTrigger.None);
+        }
+    }
+    public bool HasEnded
+    {
+        get
+        {
+            return (remainingWins > 0);
+        }
+    }
+    
+    protected Animation[] TaskStartAnimations
+    {
+        get
+        {
+            return taskStartAnimations;
+        }
+    }
     protected bool AreWinsRemaining
     {
         get
         {
             return (remainingWins > 0);
+        }
+    }
+
+    private bool IsAnimationPlaying
+    {
+        get
+        {
+            foreach (Animation checkingAnimation in taskStartAnimations)
+            {
+                if (checkingAnimation != null && checkingAnimation.isPlaying)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -62,15 +115,7 @@ public abstract class Subgame : MonoBehaviour
     /*********************** User Methods **********************/
     /***********************************************************/
 
-    public bool HasEnded
-    {
-        get
-        {
-            return (remainingWins > 0);
-        }
-    }
-
-    public SubgameState Run()
+    public void Run()
     {
         if (currentTrigger == InternalTrigger.Entry)
         {
@@ -78,7 +123,7 @@ public abstract class Subgame : MonoBehaviour
             EntryActivity();
         }
 
-        // "Do" activities (None available.)
+        DoActivity();
 
         bool hasTransitionOccured = TryTransition();
 
@@ -95,8 +140,16 @@ public abstract class Subgame : MonoBehaviour
 
         // Switch to next state.
         currentSubgameState = nextSubgameState;
+    }
 
-        return currentSubgameState;
+    public void RequestPause()
+    {
+        shallPause = true;
+    }
+
+    public void RequestResume()
+    {
+        shallPause = false;
     }
 
     private void EntryActivity()
@@ -118,6 +171,21 @@ public abstract class Subgame : MonoBehaviour
 
             case SubgameState.Paused:
                 PauseEntry();
+                break;
+        }
+    }
+
+    private void DoActivity()
+    {
+        switch(currentSubgameState)
+        {
+            case SubgameState.Active:
+                bool isPauseRequested = Input.GetKeyDown(KeyCode.Escape);
+
+                if(isPauseRequested)
+                {
+                    RequestPause();
+                }
                 break;
         }
     }
@@ -153,9 +221,10 @@ public abstract class Subgame : MonoBehaviour
                 break;
 
             case SubgameState.Active:
-                if (false /*Dummy value - Pause button pressed*/)
+                if (shallPause)
                 {
                     nextSubgameState = SubgameState.Paused;
+                    Debug.Log("Active -> Paused at " + Time.fixedTime);
                 }
                 else if (HasTaskExpired() || hasReactionOccured)
                 {
@@ -181,37 +250,15 @@ public abstract class Subgame : MonoBehaviour
                 break;
 
             case SubgameState.Paused:
-                if (false /*Dummy value - Resume button pressed*/)
+                if (!shallPause)
                 {
                     nextSubgameState = SubgameState.Active;
+                    Debug.Log("Paused -> Active at " + Time.fixedTime);
                 }
                 break;
         }
 
         return (nextSubgameState != currentSubgameState);
-    }
-
-    private bool IsAnimationPlaying
-    {
-        get
-        {
-            foreach (Animation checkingAnimation in taskStartAnimations)
-            {
-                if (checkingAnimation != null && checkingAnimation.isPlaying)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    protected Animation[] TaskStartAnimations
-    {
-        get
-        {
-            return taskStartAnimations;
-        }
     }
 
     protected abstract void PlayFadeInAnimations();
@@ -221,15 +268,6 @@ public abstract class Subgame : MonoBehaviour
     public void DestroyObject()
     {
         Object.Destroy(gameObject);
-    }
-
-    public bool ExpectsReaction
-    {
-        get
-        {
-            hasReactionOccured = true; // If a reaction is expected will only be checked upon player reaction.
-            return OnExpectsReaction();
-        }
     }
 
     private void LoadNewTask()
@@ -253,7 +291,6 @@ public abstract class Subgame : MonoBehaviour
 
     private void PauseEntry()
     {
-        // TO DO: Show pause menu.
         Debug.Log("Game has been paused.");
         OnPauseEntry();
     }

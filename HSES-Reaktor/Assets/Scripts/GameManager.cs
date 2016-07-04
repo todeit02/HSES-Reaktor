@@ -57,7 +57,6 @@ public static class GameManager
         }
     }
 
-    // PlayersCount property.
     public static int PlayersCount
     {
         set
@@ -77,8 +76,7 @@ public static class GameManager
             return playersCount;
         }
     }
-
-
+    
     public static void StartGame()
     {
         // No subgames in list. Don't do anything.
@@ -121,9 +119,16 @@ public static class GameManager
 
     public static void OnPlayerReaction(Player reactor)
     {
+         if(runningSubgame.State == Subgame.SubgameState.Active)
+        {
         bool wasReactionCorrect = runningSubgame.ExpectsReaction;
 
         reactor.TakeReactionResult(wasReactionCorrect);
+        }
+        else if(runningSubgame.State == Subgame.SubgameState.Paused)
+        {
+            runningSubgame.RequestResume();
+        }
     }
 
     public static void Reset(ResetOption resetSelection)

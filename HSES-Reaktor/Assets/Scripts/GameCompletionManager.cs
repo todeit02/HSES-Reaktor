@@ -51,8 +51,6 @@ public class GameCompletionManager : MonoBehaviour {
         GameManager.StartGame();
     }
 
-    protected override void 
-
     private void SetCongratulationText(LinkedList<PlayerStats> sourceRanking)
     {
         if (sourceRanking == null)
