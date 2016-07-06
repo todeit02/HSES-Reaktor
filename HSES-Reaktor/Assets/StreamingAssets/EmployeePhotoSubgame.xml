@@ -1,0 +1,26 @@
+<staff>
+	<employee>
+		<name>Prof. Astrid Beck</name>
+		<photoPath>beck_astrid.jpg</photoPath>
+	</employee>
+	<employee>
+		<name>Prof. Jörg Friedrich</name>
+		<photoPath>friedrich_joerg.jpg</photoPath>
+	</employee>
+	<employee>
+		<name>Prof. Reinhard Keller</name>
+		<photoPath>keller_reinhard.jpg</photoPath>
+	</employee>
+	<employee>
+		<name>Prof. Jürgen Nonnast</name>
+		<photoPath>nonnast_juergen.jpg</photoPath>
+	</employee>
+	<employee>
+		<name>Prof. Andreas Rößler</name>
+		<photoPath>roessler_andreas.jpg</photoPath>
+	</employee>
+	<employee>
+		<name>Prof. Reinhard Schmidt</name>
+		<photoPath>schmidt_reinhard.jpg</photoPath>
+	</employee>
+</staff>

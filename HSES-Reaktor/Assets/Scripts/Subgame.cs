@@ -26,6 +26,26 @@ public abstract class Subgame : MonoBehaviour
     private int remainingWins = requiredWins;
     private bool shallPause = false;
     
+    public string ResourcesFilePath
+    {
+        get
+        {
+            string subgameResFileName = string.Concat(this.GetType(), ".xml");
+            string subgameResFilePath = string.Concat(Application.streamingAssetsPath, '/', subgameResFileName);
+
+            return subgameResFilePath;
+        }
+    }
+    public string ResourcesFolder
+    {
+        get
+        {
+            string subgameResourcesFolder = string.Concat(Application.streamingAssetsPath, '/', this.GetType(), '/');
+
+            return subgameResourcesFolder;
+        }
+    }
+
     public bool ExpectsReaction
     {
         get

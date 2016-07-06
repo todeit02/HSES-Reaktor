@@ -105,10 +105,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Fonts\digital-7\readme.txt" />
-    <None Include="Assets\Resources\EmployeePhotoSubgame.xml" />
-    <None Include="Assets\Resources\FlandernstrasseOpenSubgame.xml" />
-    <None Include="Assets\Resources\SubgameList.xml" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
+    <None Include="Assets\StreamingAssets\EmployeePhotoSubgame.xml" />
+    <None Include="Assets\StreamingAssets\FlandernstrasseOpenSubgame.xml" />
+    <None Include="Assets\StreamingAssets\SubgameList.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

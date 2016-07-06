@@ -142,8 +142,6 @@ public class FlandernstrasseOpenSubgame : Subgame
 
     private void LoadXML()
     {
-        const string subgameResPath         = @".\Assets\Resources\FlandernstrasseOpenSubgame.xml";
-
         const string elemNameOpeningHours   = "openingHours";
         const string elemNameTimeInterval   = "timeInterval";
         const string elemNameWeekday        = "weekday";
@@ -160,7 +158,7 @@ public class FlandernstrasseOpenSubgame : Subgame
         int loadedEndHours = 0;
         int loadedEndMinutes = 0;
 
-        XmlReader subgameResourcesReader = XmlReader.Create(subgameResPath);
+        XmlReader subgameResourcesReader = XmlReader.Create(ResourcesFilePath);
         ParsingState state = ParsingState.awaitingOpeningHours;
         bool readSuccess = false;
         

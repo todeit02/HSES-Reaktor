@@ -145,19 +145,19 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
 
     private void LoadXML()
     {
-        const string subgameResPath = @".\Assets\Resources\EmployeePhotoSubgame.xml";
         const string elemNameStaff = "staff";
         const string elemNameEmployee = "employee";
         const string elemNameName = "name";
         const string elemNamePhotoPath = "photoPath";
         char[] ignoreChars = { '\t', '\r', '\n' };
 
-        XmlReader subgameResourcesReader = XmlReader.Create(subgameResPath);
+        XmlReader subgameResourcesReader = XmlReader.Create(ResourcesFilePath);
         ParsingState state = ParsingState.awaitingStaff;
         bool readSuccess = false;
 
         string loadedName = null;
         string loadedPhotoPath = null;
+        string loadedEffectivePhotoPath = null;
 
         while (ParsingState.done != state)
         {
@@ -208,7 +208,7 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
                         state = ParsingState.readingStaff;
 
                         loadedEmployeeNames.Add(loadedName);
-                        loadedPhotoPaths.Add(loadedPhotoPath);
+                        loadedPhotoPaths.Add(loadedEffectivePhotoPath);
 
                     }
                     else if (XmlNodeType.Element == subgameResourcesReader.NodeType)
@@ -249,6 +249,7 @@ public class EmployeePhotoSubgame : TerminableTaskSubgame
                     else if (XmlNodeType.Text == subgameResourcesReader.NodeType)
                     {
                         loadedPhotoPath = subgameResourcesReader.Value;
+                        loadedEffectivePhotoPath = string.Concat(ResourcesFolder, loadedPhotoPath);
                     }
                     break;
             }
