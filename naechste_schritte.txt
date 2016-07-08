@@ -1,5 +1,0 @@
-- Spielabschlussszene erstellen
-
-- Manager-Script erstellen
-
-- Szenen neu verknüpfen

@@ -1,7 +1,0 @@
-title Game.InstantiatePlayers()
-
-loop für gewählte Spieleranzahl
-Game->+GameObject: Instantiate(PlayerPrefab)
-GameObject-->-Game: PlayerObject
-Game->Game: players.Add(PlayerObject)
-end
